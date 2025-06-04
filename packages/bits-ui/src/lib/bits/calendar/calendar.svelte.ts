@@ -482,6 +482,7 @@ export class CalendarRootState {
 }
 
 export type CalendarHeadingStateProps = WithRefProps;
+
 export class CalendarHeadingState {
 	readonly opts: CalendarHeadingStateProps;
 	readonly root: CalendarRootState | RangeCalendarRootState;
@@ -872,8 +873,9 @@ export class CalendarHeaderState {
 	);
 }
 
+// FIX: typo
 export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
-	"Calendar.Root | RangeCalender.Root"
+	"Calendar.Root | RangeCalendar.Root"
 );
 
 const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
