@@ -1,12 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-	type DateValue,
-	getLocalTimeZone,
-	isSameMonth,
-	isSameYear,
-	isToday,
-	today,
-} from "@internationalized/date";
+import { type DateValue, getLocalTimeZone, isSameMonth, today } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { onMount, untrack } from "svelte";
 import { attachRef, DOMContext } from "svelte-toolbelt";
@@ -25,39 +17,28 @@ import {
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
-import type { DateMatcher, Month } from "$lib/shared/index.js";
+import type { DateMatcher } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
-	calendarAttrs,
 	createAccessibleHeading,
-	createMonths,
 	createYears,
 	getCalendarElementProps,
-	getCalendarHeadingValue,
 	getDateWithPreviousTime,
-	getIsNextButtonDisabled,
 	getIsNextYearCalendarButtonDisabled,
-	getIsPrevButtonDisabled,
 	getIsPrevYearCalendarButtonDisabled,
 	getMonthCalendarHeadingValue,
-	getWeekdays,
 	handleCalendarKeydown,
-	handleCalendarNextPage,
-	handleCalendarPrevPage,
 	handleMonthCalendarNextPage,
 	handleMonthCalendarPrevPage,
 	monthCalendarAttrs,
-	shiftCalendarFocus,
 	shiftMonthCalendarFocus,
 	useEnsureNonDisabledPlaceholder,
-	useMonthViewOptionsSync,
-	useMonthViewPlaceholderSync,
 	useYearViewOptionsSync,
 	useYearViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn, Year } from "$lib/shared/date/types.js";
+import type { Year } from "$lib/shared/date/types.js";
 
 type MonthCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{

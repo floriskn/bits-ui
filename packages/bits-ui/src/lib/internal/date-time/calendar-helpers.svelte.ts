@@ -65,6 +65,25 @@ export function getDaysBetween(start: DateValue, end: DateValue) {
 	return days;
 }
 
+function createDateRange<T, P extends { dateObj: DateValue }>(
+	count: number | undefined,
+	dateObj: DateValue,
+	unit: "years" | "months",
+	createFn: (props: P) => T,
+	props: Omit<P, "dateObj">
+): T[] {
+	if (!count || count === 1) {
+		return [createFn({ ...props, dateObj } as P)];
+	}
+
+	const results: T[] = [];
+	for (let i = 0; i < count; i++) {
+		const nextDate = dateObj.add({ [unit]: i });
+		results.push(createFn({ ...props, dateObj: nextDate } as P));
+	}
+	return results;
+}
+
 export type CreateMonthProps = {
 	/**
 	 * The date object representing the month's date (usually the first day of the month).
@@ -164,38 +183,7 @@ type SetMonthProps = CreateMonthProps & {
 
 export function createMonths(props: SetMonthProps) {
 	const { numberOfMonths, dateObj, ...monthProps } = props;
-
-	const months: Month<DateValue>[] = [];
-
-	if (!numberOfMonths || numberOfMonths === 1) {
-		months.push(
-			createMonth({
-				...monthProps,
-				dateObj,
-			})
-		);
-		return months;
-	}
-
-	months.push(
-		createMonth({
-			...monthProps,
-			dateObj,
-		})
-	);
-
-	// Create all the months, starting with the current month
-	for (let i = 1; i < numberOfMonths; i++) {
-		const nextMonth = dateObj.add({ months: i });
-		months.push(
-			createMonth({
-				...monthProps,
-				dateObj: nextMonth,
-			})
-		);
-	}
-
-	return months;
+	return createDateRange(numberOfMonths, dateObj, "months", createMonth, monthProps);
 }
 
 /**
@@ -271,38 +259,7 @@ type SetYearProps = CreateYearProps & {
  */
 export function createYears(props: SetYearProps) {
 	const { numberOfYears, dateObj, ...yearProps } = props;
-
-	const years: Year<DateValue>[] = [];
-
-	if (!numberOfYears || numberOfYears === 1) {
-		years.push(
-			createYear({
-				...yearProps,
-				dateObj,
-			})
-		);
-		return years;
-	}
-
-	years.push(
-		createYear({
-			...yearProps,
-			dateObj,
-		})
-	);
-
-	// Create all the years, starting with the current year
-	for (let i = 1; i < numberOfYears; i++) {
-		const nextYear = dateObj.add({ years: i });
-		years.push(
-			createYear({
-				...yearProps,
-				dateObj: nextYear,
-			})
-		);
-	}
-
-	return years;
+	return createDateRange(numberOfYears, dateObj, "years", createYear, yearProps);
 }
 
 export function getSelectableCells(calendarNode: HTMLElement | null) {
