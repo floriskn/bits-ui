@@ -1,0 +1,38 @@
+<script lang="ts">
+	import { box, mergeProps } from "svelte-toolbelt";
+	import type { MonthCalendarHeadingProps } from "../types.js";
+	import { useMonthCalendarHeading } from "../month-calendar.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
+
+	let {
+		children,
+		child,
+		ref = $bindable(null),
+		id = createId(uid),
+		...restProps
+	}: MonthCalendarHeadingProps = $props();
+
+	const headingState = useMonthCalendarHeading({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, headingState.props));
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps, headingValue: headingState.headingValue })}
+{:else}
+	<div {...mergedProps}>
+		{#if children}
+			{@render children?.({ headingValue: headingState.headingValue })}
+		{:else}
+			{headingState.headingValue}
+		{/if}
+	</div>
+{/if}

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Combobox from "./combobox.svelte";
+	import MonthCal from "./month-cal.svelte";
+	import RangeCal from "./range-cal.svelte";
 
 	let myValue = $state("");
 	const testItems = [
@@ -9,7 +11,9 @@
 	];
 </script>
 
-<div class="mt-4">
-	<button onclick={() => (myValue = "apple")}> Select Apple </button>
-	<Combobox items={testItems} type="single" bind:value={myValue} />
+<div class="mt-4 flex">
+	<!-- <button onclick={() => (myValue = "apple")}> Select Apple </button>
+	<Combobox items={testItems} type="single" bind:value={myValue} /> -->
+	<!-- <RangeCal /> -->
+	<MonthCal />
 </div>
