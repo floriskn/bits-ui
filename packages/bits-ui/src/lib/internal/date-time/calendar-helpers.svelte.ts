@@ -197,32 +197,38 @@ export function createMonths(props: SetMonthProps) {
 
 	return months;
 }
+
+/**
+ * The properties required to create a year view for the month calendar.
+ */
 export type CreateYearProps = {
 	/**
-	 * The date object representing the month's date (usually the first day of the month).
+	 * The date object representing the year's date (usually the first day of the year).
 	 */
 	dateObj: DateValue;
 
-	monthFormat: Intl.DateTimeFormatOptions["month"];
 	/**
-	 * The locale to use when creating the calendar month.
+	 * The format to use for displaying month names.
 	 */
-	// locale: string;
+	monthFormat: Intl.DateTimeFormatOptions["month"];
+
+	/**
+	 * The formatter instance used for formatting month names.
+	 */
 	formatter: Formatter;
 };
 
 /**
- * Creates a calendar month object.
+ * Creates a calendar year object for the month calendar view.
  *
  * @remarks
  * Given a date, this function returns an object containing
- * the necessary values to render a calendar month, including
- * the month's date (the first day of that month), which can be
- * used to render the name of the month, an array of all dates
- * in that month, and an array of weeks. Each week is an array
- * of dates, useful for rendering an accessible calendar grid
- * using a loop and table elements.
+ * the necessary values to render a year in the month calendar,
+ * including the year's date (the first day of that year), an array
+ * of all months in that year (with their formatted names), and an
+ * array of month groups (e.g., for rendering in a grid).
  *
+ * Each month entry contains the date and its formatted name.
  */
 function createYear(props: CreateYearProps): Year<DateValue> {
 	const { monthFormat, formatter, dateObj } = props;
@@ -246,9 +252,23 @@ function createYear(props: CreateYearProps): Year<DateValue> {
 }
 
 type SetYearProps = CreateYearProps & {
+	/**
+	 * The number of years to generate.
+	 */
 	numberOfYears: number | undefined;
 };
 
+/**
+ * Generates an array of year objects for the month calendar view.
+ *
+ * @remarks
+ * This function creates one or more year objects, starting from the
+ * provided date, and incrementing by year for each additional year.
+ * Each year object contains the months and their formatted names.
+ *
+ * @param props - The properties for generating years.
+ * @returns An array of year objects.
+ */
 export function createYears(props: SetYearProps) {
 	const { numberOfYears, dateObj, ...yearProps } = props;
 
