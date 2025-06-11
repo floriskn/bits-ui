@@ -3,7 +3,6 @@ import { DEV } from "esm-env";
 import { onMount, untrack } from "svelte";
 import { attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,
@@ -33,12 +32,13 @@ import {
 	handleMonthCalendarPrevPage,
 	monthCalendarAttrs,
 	shiftMonthCalendarFocus,
-	useEnsureNonDisabledPlaceholder,
+	useEnsureNonDisabledMonthPlaceholder,
 	useYearViewOptionsSync,
 	useYearViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import type { Year } from "$lib/shared/date/types.js";
+import type { RangeMonthCalendarRootState } from "../range-month-calendar/range-month-calendar.svelte.js";
 
 type MonthCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -174,10 +174,10 @@ export class MonthCalendarRootState {
 			}
 		);
 
-		useEnsureNonDisabledPlaceholder({
+		useEnsureNonDisabledMonthPlaceholder({
 			placeholder: opts.placeholder,
 			defaultPlaceholder: opts.defaultPlaceholder,
-			isDateDisabled: opts.isDateDisabled,
+			isMonthDisabled: opts.isDateDisabled,
 			maxValue: opts.maxValue,
 			minValue: opts.minValue,
 			ref: opts.ref,
@@ -573,12 +573,12 @@ export type MonthCalendarHeadingStateProps = WithRefProps;
 
 export class MonthCalendarHeadingState {
 	readonly opts: MonthCalendarHeadingStateProps;
-	readonly root: MonthCalendarRootState | RangeCalendarRootState;
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 	headingValue = $derived.by(() => this.root.headingValue);
 
 	constructor(
 		opts: MonthCalendarHeadingStateProps,
-		root: MonthCalendarRootState | RangeCalendarRootState
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
 	) {
 		this.opts = opts;
 		this.root = root;
@@ -601,12 +601,12 @@ export type MonthCalendarNextButtonStateProps = WithRefProps;
 
 export class MonthCalendarNextButtonState {
 	readonly opts: MonthCalendarNextButtonStateProps;
-	readonly root: MonthCalendarRootState; // | RangeMonthCalendarRootState
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 	isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
 
 	constructor(
 		opts: MonthCalendarNextButtonStateProps,
-		root: MonthCalendarRootState // | RangeMonthCalendarRootState
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
 	) {
 		this.opts = opts;
 		this.root = root;
@@ -640,12 +640,12 @@ export type MonthCalendarPrevButtonStateProps = WithRefProps;
 
 export class MonthCalendarPrevButtonState {
 	readonly opts: MonthCalendarPrevButtonStateProps;
-	readonly root: MonthCalendarRootState; // | MonthRangeCalendarRootState;
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 	isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
 
 	constructor(
 		opts: MonthCalendarPrevButtonStateProps,
-		root: MonthCalendarRootState // | RangeCalendarRootState
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
 	) {
 		this.opts = opts;
 		this.root = root;
@@ -679,11 +679,11 @@ export type MonthCalendarGridStateProps = WithRefProps;
 
 export class MonthCalendarGridState {
 	readonly opts: MonthCalendarGridStateProps;
-	readonly root: MonthCalendarRootState; // | RangeMonthCalendarRootState;
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 
 	constructor(
 		opts: MonthCalendarGridStateProps,
-		root: MonthCalendarRootState // | RangeMonthCalendarRootState
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
 	) {
 		this.opts = opts;
 		this.root = root;
@@ -709,11 +709,11 @@ export type MonthCalendarGridBodyStateProps = WithRefProps;
 
 export class MonthCalendarGridBodyState {
 	readonly opts: MonthCalendarGridBodyStateProps;
-	readonly root: MonthCalendarRootState; // | RangeMonthCalendarRootState;
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 
 	constructor(
 		opts: MonthCalendarGridBodyStateProps,
-		root: MonthCalendarRootState // | RangeMonthCalendarRootState
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
 	) {
 		this.opts = opts;
 		this.root = root;
@@ -735,11 +735,11 @@ export type MonthCalendarGridRowStateProps = WithRefProps;
 
 export class MonthCalendarGridRowState {
 	readonly opts: MonthCalendarGridRowStateProps;
-	readonly root: MonthCalendarRootState; //  | RangeMonthCalendarRootState;
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 
 	constructor(
 		opts: MonthCalendarGridRowStateProps,
-		root: MonthCalendarRootState // | RangeMonthCalendarRootState
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
 	) {
 		this.opts = opts;
 		this.root = root;
@@ -761,10 +761,12 @@ export type MonthCalendarHeaderStateProps = WithRefProps;
 
 export class MonthCalendarHeaderState {
 	readonly opts: MonthCalendarHeaderStateProps;
-	readonly root: MonthCalendarRootState | RangeCalendarRootState;
+	readonly root: MonthCalendarRootState | RangeMonthCalendarRootState;
 
-	constructor(opts: MonthCalendarHeaderStateProps, root: MonthCalendarRootState) {
-		// | RangeCalendarRootState
+	constructor(
+		opts: MonthCalendarHeaderStateProps,
+		root: MonthCalendarRootState | RangeMonthCalendarRootState
+	) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -781,10 +783,9 @@ export class MonthCalendarHeaderState {
 	);
 }
 
-// TODO:  | RangeMonthCalendarRootState
-export const MonthCalendarRootContext = new Context<MonthCalendarRootState>(
-	"MonthCalendar.Root | RangeCalendar.Root"
-);
+export const MonthCalendarRootContext = new Context<
+	MonthCalendarRootState | RangeMonthCalendarRootState
+>("MonthCalendar.Root | RangeCalendar.Root");
 
 const MonthCalendarCellContext = new Context<MonthCalendarCellState>(
 	"MonthCalendar.Cell | RangeMonthCalendar.Cell"

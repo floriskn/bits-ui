@@ -6,11 +6,6 @@
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
 	let value = $state(today(getLocalTimeZone()));
-
-	function getMonthName(monthNumber: number, locale = "en-US") {
-		const date = new Date(2000, monthNumber - 1); // year and day don't matter
-		return new Intl.DateTimeFormat(locale, { month: "short" }).format(date);
-	}
 </script>
 
 <MonthCalendar.Root
@@ -18,7 +13,7 @@
 	monthFormat="short"
 	type="single"
 	bind:value
-	numberOfYears={1}
+	numberOfYears={2}
 >
 	{#snippet children({ years })}
 		<MonthCalendar.Header class="flex items-center justify-between">
@@ -42,7 +37,7 @@
 							<MonthCalendar.GridRow class="flex w-full">
 								{#each monthDates as { date, name }, i (i)}
 									<MonthCalendar.Cell
-										{date}
+										month={date}
 										year={year.value}
 										class="p-0! relative size-10 text-center text-sm"
 									>

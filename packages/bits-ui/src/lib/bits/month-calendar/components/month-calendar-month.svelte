@@ -35,7 +35,7 @@
 		{#if children}
 			{@render children?.(dayState.snippetProps)}
 		{:else}
-			{dayState.cell.opts.date.current.day}
+			{dayState.cell.opts.date.current.month}
 		{/if}
 	</div>
 {/if}

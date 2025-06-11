@@ -259,7 +259,8 @@ type SetYearProps = CreateYearProps & {
  */
 export function createYears(props: SetYearProps) {
 	const { numberOfYears, dateObj, ...yearProps } = props;
-	return createDateRange(numberOfYears, dateObj, "years", createYear, yearProps);
+	const date = dateObj.set({ day: 1 });
+	return createDateRange(numberOfYears, date, "years", createYear, yearProps);
 }
 
 export function getSelectableCells(calendarNode: HTMLElement | null) {
@@ -1256,6 +1257,61 @@ export function useEnsureNonDisabledPlaceholder({
 			if (
 				placeholder.current &&
 				isSameDay(placeholder.current, defaultPlaceholder) &&
+				isDisabled(defaultPlaceholder)
+			) {
+				placeholder.current =
+					getFirstNonDisabledDateInView(ref.current) ?? defaultPlaceholder;
+			}
+		}
+	);
+}
+
+/**
+ * Ensures the placeholder is not set to a disabled date,
+ * which would prevent the user from entering the Calendar
+ * via the keyboard.
+ */
+export function useEnsureNonDisabledMonthPlaceholder({
+	ref,
+	placeholder,
+	defaultPlaceholder,
+	minValue,
+	maxValue,
+	isMonthDisabled,
+}: {
+	ref: WritableBox<HTMLElement | null>;
+	placeholder: WritableBox<DateValue | undefined>;
+	isMonthDisabled: ReadableBox<DateMatcher>;
+	minValue: ReadableBox<DateValue | undefined>;
+	maxValue: ReadableBox<DateValue | undefined>;
+	defaultPlaceholder: DateValue;
+}) {
+	function isDisabled(date: DateValue) {
+		if (isMonthDisabled.current(date)) return true;
+		if (minValue.current && isBefore(date, minValue.current)) return true;
+		if (maxValue.current && isBefore(maxValue.current, date)) return true;
+		return false;
+	}
+
+	watch(
+		() => ref.current,
+		() => {
+			if (!ref.current) return;
+			/**
+			 * If the placeholder is still the default placeholder and it's a disabled date, find
+			 * the first available date in the calendar view and set it as the placeholder.
+			 *
+			 * This prevents the placeholder from being a disabled date and no date being tabbable
+			 * preventing the user from entering the Calendar. If all dates in the view are
+			 * disabled, currently that is considered an error on the developer's part and should
+			 * be handled by them.
+			 *
+			 * Perhaps in the future we can introduce a dev-only log message to prevent this from
+			 * being a silent error.
+			 */
+			if (
+				placeholder.current &&
+				isSameMonth(placeholder.current, defaultPlaceholder) &&
 				isDisabled(defaultPlaceholder)
 			) {
 				placeholder.current =

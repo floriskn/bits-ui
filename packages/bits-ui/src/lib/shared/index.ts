@@ -48,6 +48,7 @@ export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 export type { EditableSegmentPart, EditableTimeSegmentPart } from "./date/types.js";
 export type {
+	Year,
 	Month,
 	DateMatcher,
 	DateOnInvalid,
